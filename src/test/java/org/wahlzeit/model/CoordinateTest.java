@@ -38,7 +38,7 @@ public class CoordinateTest {
 	@Test
 	public void testConstructor() {
 		Coordinate coordinate = new Coordinate(-12, 92);
-		assertEquals(-11, coordinate.getLatitude(), DELTA);
+		assertEquals(-12, coordinate.getLatitude(), DELTA);
 		assertEquals(92, coordinate.getLongitude(), DELTA);
 	}
 
