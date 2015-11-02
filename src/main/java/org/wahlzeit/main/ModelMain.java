@@ -20,9 +20,10 @@
 
 package org.wahlzeit.main;
 
+import org.wahlzeit.model.ChurchPhotoFactory;
+import org.wahlzeit.model.ChurchPhotoManager;
 import org.wahlzeit.model.GlobalsManager;
 import org.wahlzeit.model.PhotoCaseManager;
-import org.wahlzeit.model.PhotoFactory;
 import org.wahlzeit.model.PhotoManager;
 import org.wahlzeit.model.User;
 import org.wahlzeit.model.UserManager;
@@ -36,11 +37,13 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * A single-threaded Main class with database connection. Can be used by tools that don't want to start a server.
+ * A single-threaded Main class with database connection. Can be used by tools
+ * that don't want to start a server.
  */
 public abstract class ModelMain extends AbstractMain {
 
-	private static final Logger log = Logger.getLogger(ModelMain.class.getName());
+	private static final Logger log = Logger.getLogger(ModelMain.class
+			.getName());
 
 	/**
 	 *
@@ -49,23 +52,27 @@ public abstract class ModelMain extends AbstractMain {
 		super.startUp(rootDir);
 		log.info("AbstractMain.startUp completed");
 
-		log.config(LogBuilder.createSystemMessage().addAction("load image storage").toString());
-		//GcsAdapter.Builder gcsAdapterBuilder = new GcsAdapter.Builder();
+		log.config(LogBuilder.createSystemMessage()
+				.addAction("load image storage").toString());
+		// GcsAdapter.Builder gcsAdapterBuilder = new GcsAdapter.Builder();
 		ImageStorage.setInstance(new DatastoreAdapter());
 
-		log.config(LogBuilder.createSystemMessage().addAction("load globals").toString());
+		log.config(LogBuilder.createSystemMessage().addAction("load globals")
+				.toString());
 		GlobalsManager.getInstance().loadGlobals();
 
-		log.config(LogBuilder.createSystemMessage().addAction("load user").toString());
+		log.config(LogBuilder.createSystemMessage().addAction("load user")
+				.toString());
 		UserManager.getInstance().init();
 
-		log.config(LogBuilder.createSystemMessage().addAction("init PhotoFactory").toString());
-		PhotoFactory.initialize();
+		log.config(LogBuilder.createSystemMessage()
+				.addAction("init ChurchPhotoFactory").toString());
+		ChurchPhotoFactory.initialize();
 
-		log.config(LogBuilder.createSystemMessage().addAction("load Photos").toString());
-		PhotoManager.getInstance().init();
+		log.config(LogBuilder.createSystemMessage().addAction("load Photos")
+				.toString());
+		ChurchPhotoManager.getInstance().init();
 	}
-
 
 	/**
 	 *
@@ -79,7 +86,7 @@ public abstract class ModelMain extends AbstractMain {
 	/**
 	 *
 	 */
-	public void saveAll() throws IOException{
+	public void saveAll() throws IOException {
 		PhotoCaseManager.getInstance().savePhotoCases();
 		PhotoManager.getInstance().savePhotos();
 		UserManager.getInstance().saveClients();
@@ -89,7 +96,8 @@ public abstract class ModelMain extends AbstractMain {
 	/**
 	 *
 	 */
-	protected void createUser(String userId, String nickName, String emailAddress, String photoDir) throws Exception {
+	protected void createUser(String userId, String nickName,
+			String emailAddress, String photoDir) throws Exception {
 		UserManager userManager = UserManager.getInstance();
 		new User(userId, nickName, emailAddress);
 
@@ -97,16 +105,16 @@ public abstract class ModelMain extends AbstractMain {
 		File photoDirFile = new File(photoDir);
 		FileFilter photoFileFilter = new FileFilter() {
 			public boolean accept(File file) {
-				//TODO: check and change
+				// TODO: check and change
 				return file.getName().endsWith(".jpg");
 			}
 		};
 
 		File[] photoFiles = photoDirFile.listFiles(photoFileFilter);
 		for (int i = 0; i < photoFiles.length; i++) {
-			//TODO: change to datastore/cloud storage
-			//Photo newPhoto = photoManager.createPhoto(photoFiles[i]);
-			//user.addPhoto(newPhoto);
+			// TODO: change to datastore/cloud storage
+			// Photo newPhoto = photoManager.createPhoto(photoFiles[i]);
+			// user.addPhoto(newPhoto);
 		}
 	}
 }

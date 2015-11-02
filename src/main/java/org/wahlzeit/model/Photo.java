@@ -123,9 +123,9 @@ public class Photo extends DataObject {
 	protected String ending = "jpg";
 
 	/**
-	 * Use default constructor for initial coordinate
+	 * The location the photo was taken
 	 */
-	protected Coordinate coordinate = new Coordinate();
+	protected Location location;
 
 	/**
 	 *
@@ -426,11 +426,17 @@ public class Photo extends DataObject {
 		incWriteCount();
 	}
 
-	public Coordinate getCoordinate() {
-		return coordinate;
+	/**
+	 * @methodtype get
+	 */
+	public Location getLocation() {
+		return location;
 	}
 
-	public void setCoordinate(Coordinate coordinate) {
-		this.coordinate = coordinate;
+	/**
+	 * @methodtype set
+	 */
+	public void setCoordinate(Location location) {
+		this.location = location;
 	}
 }

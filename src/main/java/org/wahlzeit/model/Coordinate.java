@@ -5,15 +5,15 @@ import java.util.logging.Logger;
 
 /**
  * A coordinate describes a location on the earth by defining its latitudinal
- * value (north-south position) and its longitudinal (east-west position) value.
+ * value (north-south position) and its longitudinal value (east-west position).
  * 
  * @author Lucas Löffler
  *
  */
 public class Coordinate implements Serializable {
 
-	// private static final Logger log = Logger.getLogger(Coordinate.class
-	// .getName());
+	private static final Logger log = Logger.getLogger(Coordinate.class
+			.getName());
 
 	private static final long serialVersionUID = 9148993767234441255L;
 
@@ -22,6 +22,8 @@ public class Coordinate implements Serializable {
 
 	/**
 	 * Construct an empty Coordinate object with both latitude and longitude = 0
+	 * 
+	 * @methodtype constructor
 	 */
 	public Coordinate() {
 		setLatitude(0);
@@ -35,6 +37,8 @@ public class Coordinate implements Serializable {
 	 *            the latitude value
 	 * @param longitude
 	 *            the longitude value
+	 * @methodtype constructor
+	 *
 	 */
 	public Coordinate(double latitude, double longitude) {
 		setLatitude(latitude);
@@ -45,6 +49,7 @@ public class Coordinate implements Serializable {
 	 * Simple getter
 	 * 
 	 * @return the latitude
+	 * @methodtype get
 	 */
 	public double getLatitude() {
 		return latitude;
@@ -56,6 +61,7 @@ public class Coordinate implements Serializable {
 	 * 
 	 * @param latitude
 	 * @throws IllegalArgumentException
+	 * @methodtype set
 	 */
 	public void setLatitude(double latitude) throws IllegalArgumentException {
 		if (Double.isNaN(latitude) || latitude < -90 || latitude > 90) {
@@ -70,6 +76,7 @@ public class Coordinate implements Serializable {
 	 * Simple getter
 	 * 
 	 * @return the longitude
+	 * @methodtype get
 	 */
 	public double getLongitude() {
 		return longitude;
@@ -80,6 +87,7 @@ public class Coordinate implements Serializable {
 	 * integrate the validation check into setter method.
 	 * 
 	 * @param longitude
+	 * @methodtype set
 	 */
 	public void setLongitude(double longitude) {
 		if (Double.isNaN(longitude) || longitude < -180 || longitude > 180) {
@@ -91,21 +99,47 @@ public class Coordinate implements Serializable {
 	}
 
 	/**
-	 * Calculates the distance between this coordinate and the passed coordinate
-	 * by constructing a new {@code Coordinate} object that contains the
-	 * latitudinal distance to the passed coordinate as latitude and the
-	 * longitudinal distance to the passed coordinate as longitude.
+	 * Computes the orthodromic distance between two coordinates.
 	 * 
 	 * @param coordinate
-	 * @return
+	 * @return the distance as double value
+	 * @methodtype get
 	 */
-	public Coordinate getDistance(Coordinate coordinate) {
+	public double getDistance(Coordinate coordinate) {
+
 		if (coordinate == null) {
 			throw new IllegalArgumentException(
 					"Cannot calculate distance. Passed coordinate is null.");
 		}
-		return new Coordinate(getLatitudinalDistance(coordinate),
-				getLongitudinalDistance(coordinate));
+
+		// We need angle in radians for the formula, so we first have to convert
+		// the latitudinal values and the longitudinal distance to radians
+		double radiansLatitudeThis = Math.toRadians(this.latitude);
+		double radiansLatitudeOther = Math.toRadians(coordinate.getLatitude());
+		double radiansLongitudinalDistance = Math.toRadians(this
+				.getLongitudinalDistance(coordinate));
+
+		// Compute sines for both radians latitudes
+		double sineLatitudeThis = Math.sin(radiansLatitudeThis);
+		double sineLatitudeOther = Math.sin(radiansLatitudeOther);
+
+		// Compute cosines for both radians latitudes
+		double cosineLatitudeThis = Math.cos(radiansLatitudeThis);
+		double cosineLatitudeOther = Math.cos(radiansLatitudeOther);
+
+		// Compute cosine for longitudinal distance
+		double cosineLongitudinalDistance = Math
+				.cos(radiansLongitudinalDistance);
+
+		// Compute the angle in radians according to the formula
+		double angleRadians = Math.acos(sineLatitudeThis * sineLatitudeOther
+				+ cosineLatitudeThis * cosineLatitudeOther
+				* cosineLongitudinalDistance);
+
+		// Finally compute the distance, assume earth radius is 6371km
+		double distance = 6371 * angleRadians;
+		// log.info("Distance is: " + distance);
+		return distance;
 	}
 
 	/**
@@ -117,6 +151,7 @@ public class Coordinate implements Serializable {
 	 * @param coordinate
 	 *            The coordinate to calculate the distance to
 	 * @return The latitudinal distance as double value
+	 * @methodtype get
 	 */
 	public double getLatitudinalDistance(Coordinate coordinate) {
 		if (coordinate == null) {
@@ -130,17 +165,29 @@ public class Coordinate implements Serializable {
 	 * Calculates the longitudinal distance between this coordinate and the
 	 * passed coordinate by subtracting the longitude of the passed coordinate
 	 * from the longitude of this coordinate and returning the absolute value of
-	 * the result.
+	 * the result. TODO fix comment
 	 * 
 	 * @param coordinate
 	 *            The coordinate to calculate the distance to
 	 * @return The longitudinal distance
+	 * @methodtype get
 	 */
 	public double getLongitudinalDistance(Coordinate coordinate) {
 		if (coordinate == null) {
 			throw new IllegalArgumentException(
 					"Cannot calculate longitudinal distance. Passed coordinate is null.");
 		}
-		return Math.abs(longitude - coordinate.getLongitude());
+		double distance;
+		if (Math.signum(longitude) != Math.signum(coordinate.getLongitude())) {
+			distance = Math.abs(this.getLongitude())
+					+ Math.abs(coordinate.getLongitude());
+			if (distance > 180) {
+				distance = 360 - distance;
+			}
+		} else {
+			distance = Math.abs(longitude - coordinate.getLongitude());
+		}
+		// log.info("Longitudinal distance is: " + distance);
+		return distance;
 	}
 }

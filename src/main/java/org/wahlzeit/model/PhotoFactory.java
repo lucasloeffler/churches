@@ -29,7 +29,8 @@ import java.util.logging.Logger;
  */
 public class PhotoFactory {
 
-	private static final Logger log = Logger.getLogger(PhotoFactory.class.getName());
+	private static final Logger log = Logger.getLogger(PhotoFactory.class
+			.getName());
 	/**
 	 * Hidden singleton instance; needs to be initialized from the outside.
 	 */
@@ -54,8 +55,11 @@ public class PhotoFactory {
 	 */
 	public static synchronized PhotoFactory getInstance() {
 		if (instance == null) {
-			log.config(LogBuilder.createSystemMessage().addAction("setting generic PhotoFactory").toString());
-			setInstance(new PhotoFactory());
+			log.config(LogBuilder.createSystemMessage()
+					.addAction("setting generic PhotoFactory").toString());
+			// Changed only this one line. Use ChurchPhotoFactory instead of
+			// PhotoFactory
+			setInstance(new ChurchPhotoFactory());
 		}
 
 		return instance;
@@ -66,7 +70,8 @@ public class PhotoFactory {
 	 */
 	protected static synchronized void setInstance(PhotoFactory photoFactory) {
 		if (instance != null) {
-			throw new IllegalStateException("attempt to initalize PhotoFactory twice");
+			throw new IllegalStateException(
+					"attempt to initalize PhotoFactory twice");
 		}
 
 		instance = photoFactory;
@@ -87,21 +92,23 @@ public class PhotoFactory {
 	}
 
 	/**
-	 * Loads a photo. The Java object is loaded from the Google Datastore, the Images in all sizes are loaded from the
-	 * Google Cloud storage.
+	 * Loads a photo. The Java object is loaded from the Google Datastore, the
+	 * Images in all sizes are loaded from the Google Cloud storage.
 	 */
 	public Photo loadPhoto(PhotoId id) {
-	   /* Photo result =
-                OfyService.ofy().load().type(Photo.class).ancestor(KeyFactory.createKey("Application", "Wahlzeit")).filter(Photo.ID, id).first().now();
-        for (PhotoSize size : PhotoSize.values()) {
-            GcsFilename gcsFilename = new GcsFilename("picturebucket", filename);
-
-
-
-        }*/
+		/*
+		 * Photo result =
+		 * OfyService.ofy().load().type(Photo.class).ancestor(KeyFactory
+		 * .createKey("Application", "Wahlzeit")).filter(Photo.ID,
+		 * id).first().now(); for (PhotoSize size : PhotoSize.values()) {
+		 * GcsFilename gcsFilename = new GcsFilename("picturebucket", filename);
+		 * 
+		 * 
+		 * 
+		 * }
+		 */
 		return null;
 	}
-
 
 	/**
 	 *
