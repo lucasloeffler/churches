@@ -2,6 +2,8 @@ package org.wahlzeit.model;
 
 import java.io.Serializable;
 
+import com.googlecode.objectify.annotation.Container;
+
 /**
  * Location consists of a name and a {@link Coordinate}.
  * 
@@ -19,6 +21,7 @@ public class Location implements Serializable {
 	/**
 	 * The locations coordinate
 	 */
+	@Container
 	protected Coordinate coordinate;
 
 	/**
@@ -27,8 +30,6 @@ public class Location implements Serializable {
 	public Location() {
 		// empty String as name
 		this.setName("");
-		// default coordinate as coordinate
-		this.setCoordinate(new Coordinate());
 	}
 
 	/**

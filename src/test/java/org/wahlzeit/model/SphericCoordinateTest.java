@@ -3,47 +3,51 @@ package org.wahlzeit.model;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class CoordinateTest {
+public class SphericCoordinateTest {
 
 	private static final double DELTA = 0.5;
 
-	private static final Coordinate erlangen = new Coordinate(49.58, 11.01);
-	private static final Coordinate houston = new Coordinate(29.76, -95.36);
-	private static final Coordinate yakutsk = new Coordinate(62.03, 129.6);
-	private static final Coordinate sydney = new Coordinate(-33.86, 151.2);
+	private static final SphericCoordinate erlangen = new SphericCoordinate(
+			49.58, 11.01);
+	private static final SphericCoordinate houston = new SphericCoordinate(
+			29.76, -95.36);
+	private static final SphericCoordinate yakutsk = new SphericCoordinate(
+			62.03, 129.6);
+	private static final SphericCoordinate sydney = new SphericCoordinate(
+			-33.86, 151.2);
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLatitudeOutOfHigherBounds() {
-		new Coordinate(91, 0);
+		new SphericCoordinate(91, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLatitudeOutOfLowerBounds() {
-		new Coordinate(-91, 0);
+		new SphericCoordinate(-91, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLongitudeOutOfHigherBounds() {
-		new Coordinate(45, 181);
+		new SphericCoordinate(45, 181);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLongitudeOutOfLowerBounds() {
-		new Coordinate(45, -181);
+		new SphericCoordinate(45, -181);
 	}
 
 	@Test
 	public void testDefaultConstructor() {
-		Coordinate coordinate = new Coordinate();
-		assertEquals(0.0, coordinate.getLatitude(), DELTA);
-		assertEquals(0.0, coordinate.getLongitude(), DELTA);
+		SphericCoordinate sphericCoordinate = new SphericCoordinate();
+		assertEquals(0.0, sphericCoordinate.getLatitude(), DELTA);
+		assertEquals(0.0, sphericCoordinate.getLongitude(), DELTA);
 	}
 
 	@Test
 	public void testConstructor() {
-		Coordinate coordinate = new Coordinate(-12, 92);
-		assertEquals(-12, coordinate.getLatitude(), DELTA);
-		assertEquals(92, coordinate.getLongitude(), DELTA);
+		SphericCoordinate sphericCoordinate = new SphericCoordinate(-12, 92);
+		assertEquals(-12, sphericCoordinate.getLatitude(), DELTA);
+		assertEquals(92, sphericCoordinate.getLongitude(), DELTA);
 	}
 
 	@Test
