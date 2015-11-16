@@ -3,12 +3,15 @@ package org.wahlzeit.model;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class SphericCoordinateTest {
+public class CoordinateTest {
 
 	private static final double DELTA = 0.5;
 
-	private static final SphericCoordinate erlangen = new SphericCoordinate(
+	private static final SphericCoordinate erlangenSpheric = new SphericCoordinate(
 			49.58, 11.01);
+	private static final SphericCoordinate erlangenSphericCopy = new SphericCoordinate(
+			49.58, 11.01);
+
 	private static final SphericCoordinate houston = new SphericCoordinate(
 			29.76, -95.36);
 	private static final SphericCoordinate yakutsk = new SphericCoordinate(
@@ -51,13 +54,29 @@ public class SphericCoordinateTest {
 	}
 
 	@Test
+	public void testEquals() {
+		assertTrue(erlangenSpheric.isEqual(erlangenSpheric));
+		assertTrue(erlangenSpheric.isEqual(erlangenSphericCopy));
+		assertTrue(!erlangenSpheric.isEqual(houston));
+	}
+
+	@Test
+	public void testToSphericCoordinateSimple() {
+		assertEquals(erlangenSpheric.getLatitude(), erlangenSpheric
+				.toSphericCoordinate().getLatitude(), 0);
+		assertEquals(erlangenSpheric.getLongitude(), erlangenSpheric
+				.toSphericCoordinate().getLongitude(), 0);
+	}
+
+	@Test
 	public void testLatitudinalDistance() {
-		assertEquals(19.8, erlangen.getLatitudinalDistance(houston), DELTA);
+		assertEquals(19.8, erlangenSpheric.getLatitudinalDistance(houston),
+				DELTA);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLatitudinalDistanceParameterNull() {
-		erlangen.getLatitudinalDistance(null);
+		erlangenSpheric.getLatitudinalDistance(null);
 	}
 
 	@Test
@@ -81,7 +100,7 @@ public class SphericCoordinateTest {
 	// http://www.movable-type.co.uk/scripts/latlong.html
 	@Test
 	public void testDistanceErlangenHouston() {
-		double distance = erlangen.getDistance(houston);
+		double distance = erlangenSpheric.getDistance(houston);
 		assertEquals(distance, 8599, DELTA);
 	}
 
@@ -99,19 +118,19 @@ public class SphericCoordinateTest {
 
 	@Test
 	public void testDistanceSydneyErlangen() {
-		double distance = sydney.getDistance(erlangen);
+		double distance = sydney.getDistance(erlangenSpheric);
 		assertEquals(distance, 16335, DELTA);
 	}
 
 	@Test
 	public void testDistanceErlangenErlangen() {
-		double distance = erlangen.getDistance(erlangen);
+		double distance = erlangenSpheric.getDistance(erlangenSpheric);
 		assertEquals(distance, 0, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testDistanceParamterNull() {
-		erlangen.getDistance(null);
+		erlangenSpheric.getDistance(null);
 	}
 
 }

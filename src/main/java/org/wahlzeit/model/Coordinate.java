@@ -2,6 +2,10 @@ package org.wahlzeit.model;
 
 import java.io.Serializable;
 
+/**
+ * @author Lucas Löffler
+ *
+ */
 public interface Coordinate extends Serializable {
 
 	/**
@@ -21,7 +25,6 @@ public interface Coordinate extends Serializable {
 	public boolean isEqual(Coordinate coordinate);
 
 	/**
-	 * 
 	 * @return the spheric representation of a coordinate
 	 * 
 	 * @methodtype conversion
@@ -29,11 +32,10 @@ public interface Coordinate extends Serializable {
 	public SphericCoordinate toSphericCoordinate();
 
 	/**
-	 * 
-	 * @return the cartesian representation of a coordinate
+	 * @return the String representation of a coordinate
 	 * 
 	 * @methodtype conversion
 	 */
-	public CartesianCoordinate toCartesianCoordinate();
+	public String toString();
 
 }

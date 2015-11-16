@@ -10,14 +10,14 @@ import java.util.logging.Logger;
  * @author Lucas Löffler
  *
  */
-public class SphericCoordinate implements Coordinate {
+public class SphericCoordinate extends AbstractCoordinate {
 
 	private static final Logger log = Logger.getLogger(SphericCoordinate.class
 			.getName());
 
 	private static final long serialVersionUID = 9148993767234441255L;
 
-	private final int EARTHRADIUS = 6371;
+	private static final int EARTHRADIUS = 6371;
 
 	private double latitude;
 
@@ -33,9 +33,7 @@ public class SphericCoordinate implements Coordinate {
 	 * @methodtype constructor
 	 */
 	public SphericCoordinate() {
-		setLatitude(0);
-		setLongitude(0);
-		setRadius(EARTHRADIUS);
+		this(0, 0, EARTHRADIUS);
 	}
 
 	/**
@@ -52,9 +50,7 @@ public class SphericCoordinate implements Coordinate {
 	 *
 	 */
 	public SphericCoordinate(double latitude, double longitude) {
-		setLatitude(latitude);
-		setLongitude(longitude);
-		setRadius(EARTHRADIUS);
+		this(latitude, longitude, EARTHRADIUS);
 	}
 
 	/**
@@ -73,53 +69,22 @@ public class SphericCoordinate implements Coordinate {
 	}
 
 	/**
-	 * Computes the orthodromic distance between two coordinates.
 	 * 
-	 * @param coordinate
-	 * @return the distance as double value
-	 * @methodtype get
+	 * @methodtype conversion
 	 */
-	public double getDistance(Coordinate coordinate) {
+	@Override
+	public String toString() {
+		return "Spheric coordinate with latitude: " + latitude
+				+ " and longitude: " + longitude;
+	}
 
-		if (coordinate == null) {
-			throw new IllegalArgumentException(
-					"Cannot calculate distance. Passed coordinate is null.");
-		}
-		SphericCoordinate sphericCoordinate = null;
-		if (coordinate instanceof SphericCoordinate)
-			sphericCoordinate = (SphericCoordinate) coordinate;
-		else
-			sphericCoordinate = coordinate.toSphericCoordinate();
-
-		// We need angle in radians for the formula, so we first have to convert
-		// the latitudinal values and the longitudinal distance to radians
-		double radiansLatitudeThis = Math.toRadians(this.latitude);
-		double radiansLatitudeOther = Math.toRadians(sphericCoordinate
-				.getLatitude());
-		double radiansLongitudinalDistance = Math.toRadians(this
-				.getLongitudinalDistance(coordinate));
-
-		// Compute sines for both radians latitudes
-		double sineLatitudeThis = Math.sin(radiansLatitudeThis);
-		double sineLatitudeOther = Math.sin(radiansLatitudeOther);
-
-		// Compute cosines for both radians latitudes
-		double cosineLatitudeThis = Math.cos(radiansLatitudeThis);
-		double cosineLatitudeOther = Math.cos(radiansLatitudeOther);
-
-		// Compute cosine for longitudinal distance
-		double cosineLongitudinalDistance = Math
-				.cos(radiansLongitudinalDistance);
-
-		// Compute the angle in radians according to the formula
-		double angleRadians = Math.acos(sineLatitudeThis * sineLatitudeOther
-				+ cosineLatitudeThis * cosineLatitudeOther
-				* cosineLongitudinalDistance);
-
-		// Finally compute the distance
-		double distance = radius * angleRadians;
-		// log.info("Distance is: " + distance);
-		return distance;
+	/**
+	 * 
+	 * @methodtype conversion
+	 */
+	@Override
+	public SphericCoordinate toSphericCoordinate() {
+		return this;
 	}
 
 	/**
@@ -134,17 +99,12 @@ public class SphericCoordinate implements Coordinate {
 	 * 
 	 * @methodtype get
 	 */
-	public double getLatitudinalDistance(Coordinate coordinate) {
-		if (coordinate == null) {
+	public double getLatitudinalDistance(SphericCoordinate sphericCoordinate) {
+		if (sphericCoordinate == null) {
 			throw new IllegalArgumentException(
 					"Cannot calculate latitudinal distance. Passed coordinate is null.");
 		}
-		SphericCoordinate sphericCoordinate = null;
-		if (coordinate instanceof SphericCoordinate)
-			sphericCoordinate = (SphericCoordinate) coordinate;
-		else
-			sphericCoordinate = coordinate.toSphericCoordinate();
-		return Math.abs(latitude - sphericCoordinate.getLatitude());
+		return Math.abs(this.latitude - sphericCoordinate.getLatitude());
 	}
 
 	/**
@@ -159,15 +119,10 @@ public class SphericCoordinate implements Coordinate {
 	 * 
 	 * @methodtype get
 	 */
-	public double getLongitudinalDistance(Coordinate coordinate) {
-		if (coordinate == null)
+	public double getLongitudinalDistance(SphericCoordinate sphericCoordinate) {
+		if (sphericCoordinate == null)
 			throw new IllegalArgumentException(
 					"Cannot calculate longitudinal distance. Passed coordinate is null.");
-		SphericCoordinate sphericCoordinate = null;
-		if (coordinate instanceof SphericCoordinate)
-			sphericCoordinate = (SphericCoordinate) coordinate;
-		else
-			sphericCoordinate = coordinate.toSphericCoordinate();
 
 		double distance;
 		if (Math.signum(longitude) != Math.signum(sphericCoordinate
@@ -178,57 +133,11 @@ public class SphericCoordinate implements Coordinate {
 				distance = 360 - distance;
 			}
 		} else {
-			distance = Math.abs(longitude - sphericCoordinate.getLongitude());
+			distance = Math.abs(this.longitude
+					- sphericCoordinate.getLongitude());
 		}
 		// log.info("Longitudinal distance is: " + distance);
 		return distance;
-	}
-
-	@Override
-	public SphericCoordinate toSphericCoordinate() {
-		return this;
-	}
-
-	@Override
-	public CartesianCoordinate toCartesianCoordinate() {
-		double sineLongitude = Math.sin(this.longitude);
-		double sineLatitude = Math.sin(this.latitude);
-		double cosineLatitude = Math.cos(this.latitude);
-		double cosineLongitude = Math.cos(this.longitude);
-		double x = radius * sineLongitude * cosineLatitude;
-		double y = radius * sineLongitude * sineLatitude;
-		double z = radius * cosineLongitude;
-		return new CartesianCoordinate(x, y, z);
-	}
-
-	@Override
-	public boolean isEqual(Coordinate coordinate) {
-		if (this == coordinate)
-			return true;
-		if (coordinate == null)
-			return false;
-		if (getClass() != coordinate.getClass())
-			return false;
-		SphericCoordinate other = (SphericCoordinate) coordinate;
-		if (Double.doubleToLongBits(latitude) != Double
-				.doubleToLongBits(other.latitude))
-			return false;
-		if (Double.doubleToLongBits(longitude) != Double
-				.doubleToLongBits(other.longitude))
-			return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(latitude);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(longitude);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
 	}
 
 	/**
@@ -276,7 +185,6 @@ public class SphericCoordinate implements Coordinate {
 	 * @methodtype set
 	 */
 	public void setLongitude(double longitude) {
-		// TODO 179.999
 		if (Double.isNaN(longitude) || longitude < -180 || longitude > 180) {
 			throw new IllegalArgumentException(
 					"Invalid longitude. Value must be between 180 and -180.");
