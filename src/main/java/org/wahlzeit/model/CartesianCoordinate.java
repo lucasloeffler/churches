@@ -1,7 +1,5 @@
 package org.wahlzeit.model;
 
-import java.util.logging.Logger;
-
 /**
  * A cartesian coordinate describes a point in a three-dimensional cartesian
  * coordinate system. Every point contains of three axis values (x, y, z) that
@@ -11,9 +9,6 @@ import java.util.logging.Logger;
  *
  */
 public class CartesianCoordinate extends AbstractCoordinate {
-
-	private static final Logger log = Logger
-			.getLogger(CartesianCoordinate.class.getName());
 
 	private static final long serialVersionUID = -484535636537846455L;
 
@@ -61,8 +56,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
 				+ Math.pow(this.getY(), 2) + Math.pow(this.getZ(), 2));
 		double latitude = Math.toDegrees(Math.asin(this.getZ() / r));
 		double longitude = Math.toDegrees(Math.atan2(this.getY(), this.getX()));
-		log.info("Latitude: " + latitude);
-		log.info("Longitude: " + longitude);
 		return new SphericCoordinate(latitude, longitude, r);
 	}
 

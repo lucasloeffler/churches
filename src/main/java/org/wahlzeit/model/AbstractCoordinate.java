@@ -1,7 +1,5 @@
 package org.wahlzeit.model;
 
-import java.util.logging.Logger;
-
 import org.wahlzeit.services.DataObject;
 
 /**
@@ -10,9 +8,6 @@ import org.wahlzeit.services.DataObject;
  */
 public abstract class AbstractCoordinate extends DataObject implements
 		Coordinate {
-
-	private static final Logger log = Logger.getLogger(AbstractCoordinate.class
-			.getName());
 
 	private static final long serialVersionUID = -3526198300387449394L;
 
@@ -27,28 +22,18 @@ public abstract class AbstractCoordinate extends DataObject implements
 	 */
 	@Override
 	public double getDistance(Coordinate coordinate) {
-		if (coordinate == null)
-			throw new IllegalArgumentException(
-					"Cannot calculate distance between coordinates. Passed coordinate is null.");
-
-		SphericCoordinate sphericCoordinateThis = this.toSphericCoordinate();
-		SphericCoordinate sphericCoordinateOhter = coordinate
-				.toSphericCoordinate();
-
-		if (sphericCoordinateThis.getRadius() != sphericCoordinateOhter
-				.getRadius())
-			throw new IllegalArgumentException(
-					"Cannot calculate distance of coordinates with different radius.");
+		assertParamNotNull(coordinate);
+		assertSameRadius(coordinate.toSphericCoordinate().getRadius());
 
 		// We need angle in radians for the formula, so we first have to convert
 		// the latitudinal values and the longitudinal distance to radians
-		double radiansLatitudeThis = Math.toRadians(sphericCoordinateThis
+		double radiansLatitudeThis = Math.toRadians(this.toSphericCoordinate()
 				.getLatitude());
-		double radiansLatitudeOther = Math.toRadians(sphericCoordinateOhter
-				.getLatitude());
-		double radiansLongitudinalDistance = Math
-				.toRadians(sphericCoordinateThis
-						.getLongitudinalDistance(sphericCoordinateOhter));
+		double radiansLatitudeOther = Math.toRadians(coordinate
+				.toSphericCoordinate().getLatitude());
+		double radiansLongitudinalDistance = Math.toRadians(this
+				.toSphericCoordinate().getLongitudinalDistance(
+						coordinate.toSphericCoordinate()));
 
 		// Compute sines for both radians latitudes
 		double sineLatitudeThis = Math.sin(radiansLatitudeThis);
@@ -68,10 +53,37 @@ public abstract class AbstractCoordinate extends DataObject implements
 				* cosineLongitudinalDistance);
 
 		// Finally compute the distance
-		double distance = sphericCoordinateThis.getRadius() * angleRadians;
-		// log.info("Distance is: " + distance);
+		double distance = this.toSphericCoordinate().getRadius() * angleRadians;
 		return distance;
+	}
 
+	protected void assertParamNotNull(Coordinate coordinate) {
+		if (coordinate == null)
+			throw new IllegalArgumentException(
+					"Passed coordinate must not be null.");
+	}
+
+	protected void assertSameRadius(double radius) {
+		if (this.toSphericCoordinate().getRadius() != radius)
+			throw new IllegalArgumentException(
+					"Cannot calculate distance of coordinates with different radius.");
+	}
+
+	protected void assertValidLatitude(double latitude) {
+		if (Double.isNaN(latitude) || latitude < -90 || latitude > 90)
+			throw new IllegalArgumentException(
+					"Invalid latitude. Value must be between 90 and -90.");
+	}
+
+	protected void assertValidLongitude(double longitude) {
+		if (Double.isNaN(longitude) || longitude < -180 || longitude > 180)
+			throw new IllegalArgumentException(
+					"Invalid longitude. Value must be between 180 and -180.");
+	}
+
+	protected void assertValidRadius(double radius) {
+		if (radius < 0)
+			throw new IllegalArgumentException("Invalid radius. Radius must not be negative.");
 	}
 
 	/**

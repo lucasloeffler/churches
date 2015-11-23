@@ -1,7 +1,5 @@
 package org.wahlzeit.model;
 
-import java.util.logging.Logger;
-
 /**
  * A spheric coordinate describes a point in a spherical coordinate system.
  * Every point contains of a latitudinal value, a longitudinal value and a
@@ -11,9 +9,6 @@ import java.util.logging.Logger;
  *
  */
 public class SphericCoordinate extends AbstractCoordinate {
-
-	private static final Logger log = Logger.getLogger(SphericCoordinate.class
-			.getName());
 
 	private static final long serialVersionUID = 9148993767234441255L;
 
@@ -34,6 +29,21 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 */
 	public SphericCoordinate() {
 		this(0, 0, EARTHRADIUS);
+	}
+
+	public SphericCoordinate(Coordinate coordinate) {
+		assertParamNotNull(coordinate);
+		SphericCoordinate sphericCoordinate = coordinate.toSphericCoordinate();
+		setLatitude(sphericCoordinate.getLatitude());
+		setLongitude(sphericCoordinate.getLongitude());
+		setRadius(sphericCoordinate.getRadius());
+		assertValidSphericCoordinate();
+	}
+
+	protected void assertValidSphericCoordinate() {
+		assertValidLatitude(this.latitude);
+		assertValidLongitude(this.longitude);
+		assertValidRadius(this.getRadius());
 	}
 
 	/**
@@ -66,6 +76,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 		setLatitude(latitude);
 		setLongitude(longitude);
 		setRadius(radius);
+		assertValidSphericCoordinate();
 	}
 
 	/**
@@ -100,10 +111,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype get
 	 */
 	public double getLatitudinalDistance(SphericCoordinate sphericCoordinate) {
-		if (sphericCoordinate == null) {
-			throw new IllegalArgumentException(
-					"Cannot calculate latitudinal distance. Passed coordinate is null.");
-		}
+		assertParamNotNull(sphericCoordinate);
 		return Math.abs(this.latitude - sphericCoordinate.getLatitude());
 	}
 
@@ -120,10 +128,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype get
 	 */
 	public double getLongitudinalDistance(SphericCoordinate sphericCoordinate) {
-		if (sphericCoordinate == null)
-			throw new IllegalArgumentException(
-					"Cannot calculate longitudinal distance. Passed coordinate is null.");
-
+		assertParamNotNull(sphericCoordinate);
 		double distance;
 		if (Math.signum(longitude) != Math.signum(sphericCoordinate
 				.getLongitude())) {
@@ -159,12 +164,8 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype set
 	 */
 	public void setLatitude(double latitude) throws IllegalArgumentException {
-		if (Double.isNaN(latitude) || latitude < -90 || latitude > 90) {
-			throw new IllegalArgumentException(
-					"Invalid latitude. Value must be between 90 and -90.");
-		} else {
-			this.latitude = latitude;
-		}
+		assertValidLatitude(latitude);
+		this.latitude = latitude;
 	}
 
 	/**
@@ -185,12 +186,8 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype set
 	 */
 	public void setLongitude(double longitude) {
-		if (Double.isNaN(longitude) || longitude < -180 || longitude > 180) {
-			throw new IllegalArgumentException(
-					"Invalid longitude. Value must be between 180 and -180.");
-		} else {
-			this.longitude = longitude;
-		}
+		assertValidLongitude(longitude);
+		this.longitude = longitude;
 	}
 
 	/**
@@ -206,6 +203,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype set
 	 */
 	public void setRadius(double radius) {
+		assertValidRadius(radius);
 		this.radius = radius;
 	}
 }
