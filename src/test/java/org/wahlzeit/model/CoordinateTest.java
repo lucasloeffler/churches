@@ -61,14 +61,6 @@ public class CoordinateTest {
 	}
 
 	@Test
-	public void testToSphericCoordinateSimple() {
-		assertEquals(erlangenSpheric.getLatitude(), erlangenSpheric
-				.toSphericCoordinate().getLatitude(), 0);
-		assertEquals(erlangenSpheric.getLongitude(), erlangenSpheric
-				.toSphericCoordinate().getLongitude(), 0);
-	}
-
-	@Test
 	public void testLatitudinalDistance() {
 		assertEquals(19.8, erlangenSpheric.getLatitudinalDistance(houston),
 				DELTA);

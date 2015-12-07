@@ -1,13 +1,10 @@
 package org.wahlzeit.model;
 
-import org.wahlzeit.services.DataObject;
-
 /**
  * @author Lucas Löffler
  *
  */
-public abstract class AbstractCoordinate extends DataObject implements
-		Coordinate {
+public abstract class AbstractCoordinate implements Coordinate {
 
 	private static final long serialVersionUID = -3526198300387449394L;
 
@@ -18,22 +15,21 @@ public abstract class AbstractCoordinate extends DataObject implements
 	 * @param coordinate
 	 * @return the distance as double value
 	 *
-	 * @methodtype get
+	 * @methodtype query
 	 */
 	@Override
 	public double getDistance(Coordinate coordinate) {
+		// Preconditions
+		assertClassInvariants();
 		assertParamNotNull(coordinate);
-		assertSameRadius(coordinate.toSphericCoordinate().getRadius());
+		assertSameRadius(coordinate.getRadius());
 
 		// We need angle in radians for the formula, so we first have to convert
 		// the latitudinal values and the longitudinal distance to radians
-		double radiansLatitudeThis = Math.toRadians(this.toSphericCoordinate()
-				.getLatitude());
-		double radiansLatitudeOther = Math.toRadians(coordinate
-				.toSphericCoordinate().getLatitude());
-		double radiansLongitudinalDistance = Math.toRadians(this
-				.toSphericCoordinate().getLongitudinalDistance(
-						coordinate.toSphericCoordinate()));
+		double radiansLatitudeThis = Math.toRadians(this.getLatitude());
+		double radiansLatitudeOther = Math.toRadians(coordinate.getLatitude());
+		double radiansDeltaLong = Math.toRadians(Math.abs(this.getLongitude()
+				- coordinate.getLongitude()));
 
 		// Compute sines for both radians latitudes
 		double sineLatitudeThis = Math.sin(radiansLatitudeThis);
@@ -44,8 +40,7 @@ public abstract class AbstractCoordinate extends DataObject implements
 		double cosineLatitudeOther = Math.cos(radiansLatitudeOther);
 
 		// Compute cosine for longitudinal distance
-		double cosineLongitudinalDistance = Math
-				.cos(radiansLongitudinalDistance);
+		double cosineLongitudinalDistance = Math.cos(radiansDeltaLong);
 
 		// Compute the angle in radians according to the formula
 		double angleRadians = Math.acos(sineLatitudeThis * sineLatitudeOther
@@ -53,8 +48,18 @@ public abstract class AbstractCoordinate extends DataObject implements
 				* cosineLongitudinalDistance);
 
 		// Finally compute the distance
-		double distance = this.toSphericCoordinate().getRadius() * angleRadians;
+		double distance = this.getRadius() * angleRadians;
+
+		// Postcondition
+		assert distance >= 0;
 		return distance;
+	}
+
+	protected void assertClassInvariants() {
+		// Check if we have a valid coordinate
+		assertValidLatitude(this.getLatitude());
+		assertValidLongitude(this.getLongitude());
+		assertValidRadius(this.getRadius());
 	}
 
 	protected void assertParamNotNull(Coordinate coordinate) {
@@ -64,26 +69,33 @@ public abstract class AbstractCoordinate extends DataObject implements
 	}
 
 	protected void assertSameRadius(double radius) {
-		if (this.toSphericCoordinate().getRadius() != radius)
+		if (this.getRadius() != radius)
 			throw new IllegalArgumentException(
 					"Cannot calculate distance of coordinates with different radius.");
 	}
 
-	protected void assertValidLatitude(double latitude) {
+	protected static void assertValidCoordinate(Coordinate coordinate) {
+		assertValidLatitude(coordinate.getLatitude());
+		assertValidLongitude(coordinate.getLongitude());
+		assertValidRadius(coordinate.getRadius());
+	}
+
+	protected static void assertValidLatitude(double latitude) {
 		if (Double.isNaN(latitude) || latitude < -90 || latitude > 90)
 			throw new IllegalArgumentException(
 					"Invalid latitude. Value must be between 90 and -90.");
 	}
 
-	protected void assertValidLongitude(double longitude) {
+	protected static void assertValidLongitude(double longitude) {
 		if (Double.isNaN(longitude) || longitude < -180 || longitude > 180)
 			throw new IllegalArgumentException(
 					"Invalid longitude. Value must be between 180 and -180.");
 	}
 
-	protected void assertValidRadius(double radius) {
+	protected static void assertValidRadius(double radius) {
 		if (radius < 0)
-			throw new IllegalArgumentException("Invalid radius. Radius must not be negative.");
+			throw new IllegalArgumentException(
+					"Invalid radius. Radius must not be negative.");
 	}
 
 	/**
@@ -100,18 +112,12 @@ public abstract class AbstractCoordinate extends DataObject implements
 		if (getClass() != coordinate.getClass())
 			return false;
 
-		SphericCoordinate sphericCoordinateThis = this.toSphericCoordinate();
-		SphericCoordinate sphericCoordinateOhter = coordinate
-				.toSphericCoordinate();
-
-		if (Double.doubleToLongBits(sphericCoordinateThis.getLatitude()) != Double
-				.doubleToLongBits(sphericCoordinateOhter.getLatitude()))
+		if (Double.doubleToLongBits(this.getLatitude()) != Double
+				.doubleToLongBits(coordinate.getLatitude()))
 			return false;
-		if (Double.doubleToLongBits(sphericCoordinateThis.getLongitude()) != Double
-				.doubleToLongBits(sphericCoordinateThis.getLongitude()))
+		if (Double.doubleToLongBits(this.getLongitude()) != Double
+				.doubleToLongBits(coordinate.getLongitude()))
 			return false;
 		return true;
 	}
-
-	public abstract SphericCoordinate toSphericCoordinate();
 }

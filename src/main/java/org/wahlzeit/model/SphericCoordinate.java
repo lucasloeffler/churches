@@ -31,19 +31,17 @@ public class SphericCoordinate extends AbstractCoordinate {
 		this(0, 0, EARTHRADIUS);
 	}
 
+	/**
+	 * 
+	 * @methodtype constructor
+	 */
 	public SphericCoordinate(Coordinate coordinate) {
+		assertValidCoordinate(coordinate);
 		assertParamNotNull(coordinate);
-		SphericCoordinate sphericCoordinate = coordinate.toSphericCoordinate();
-		setLatitude(sphericCoordinate.getLatitude());
-		setLongitude(sphericCoordinate.getLongitude());
-		setRadius(sphericCoordinate.getRadius());
-		assertValidSphericCoordinate();
-	}
-
-	protected void assertValidSphericCoordinate() {
-		assertValidLatitude(this.latitude);
-		assertValidLongitude(this.longitude);
-		assertValidRadius(this.getRadius());
+		setLatitude(coordinate.getLatitude());
+		setLongitude(coordinate.getLongitude());
+		setRadius(coordinate.getRadius());
+		assertClassInvariants();
 	}
 
 	/**
@@ -73,10 +71,13 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype constructor
 	 */
 	public SphericCoordinate(double latitude, double longitude, double radius) {
+		assertValidLatitude(latitude);
+		assertValidLongitude(longitude);
+		assertValidRadius(radius);
 		setLatitude(latitude);
 		setLongitude(longitude);
 		setRadius(radius);
-		assertValidSphericCoordinate();
+		assertClassInvariants();
 	}
 
 	/**
@@ -87,15 +88,6 @@ public class SphericCoordinate extends AbstractCoordinate {
 	public String toString() {
 		return "Spheric coordinate with latitude: " + latitude
 				+ " and longitude: " + longitude;
-	}
-
-	/**
-	 * 
-	 * @methodtype conversion
-	 */
-	@Override
-	public SphericCoordinate toSphericCoordinate() {
-		return this;
 	}
 
 	/**
@@ -111,8 +103,13 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype get
 	 */
 	public double getLatitudinalDistance(SphericCoordinate sphericCoordinate) {
+		assertClassInvariants();
 		assertParamNotNull(sphericCoordinate);
-		return Math.abs(this.latitude - sphericCoordinate.getLatitude());
+		assertValidCoordinate(sphericCoordinate);
+		double latitudinalDistance = Math.abs(this.latitude
+				- sphericCoordinate.getLatitude());
+		assert latitudinalDistance >= 0;
+		return latitudinalDistance;
 	}
 
 	/**
@@ -128,21 +125,23 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype get
 	 */
 	public double getLongitudinalDistance(SphericCoordinate sphericCoordinate) {
+		assertClassInvariants();
 		assertParamNotNull(sphericCoordinate);
-		double distance;
+		assertValidCoordinate(sphericCoordinate);
+		double longitudinalDistance;
 		if (Math.signum(longitude) != Math.signum(sphericCoordinate
 				.getLongitude())) {
-			distance = Math.abs(this.getLongitude())
+			longitudinalDistance = Math.abs(this.getLongitude())
 					+ Math.abs(sphericCoordinate.getLongitude());
-			if (distance > 180) {
-				distance = 360 - distance;
+			if (longitudinalDistance > 180) {
+				longitudinalDistance = 360 - longitudinalDistance;
 			}
 		} else {
-			distance = Math.abs(this.longitude
+			longitudinalDistance = Math.abs(this.longitude
 					- sphericCoordinate.getLongitude());
 		}
-		// log.info("Longitudinal distance is: " + distance);
-		return distance;
+		assert longitudinalDistance >= 0;
+		return longitudinalDistance;
 	}
 
 	/**
@@ -166,6 +165,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	public void setLatitude(double latitude) throws IllegalArgumentException {
 		assertValidLatitude(latitude);
 		this.latitude = latitude;
+		assertClassInvariants();
 	}
 
 	/**
@@ -188,6 +188,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	public void setLongitude(double longitude) {
 		assertValidLongitude(longitude);
 		this.longitude = longitude;
+		assertClassInvariants();
 	}
 
 	/**
@@ -205,5 +206,6 @@ public class SphericCoordinate extends AbstractCoordinate {
 	public void setRadius(double radius) {
 		assertValidRadius(radius);
 		this.radius = radius;
+		assertClassInvariants();
 	}
 }

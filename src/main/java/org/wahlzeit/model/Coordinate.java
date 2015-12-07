@@ -25,17 +25,40 @@ public interface Coordinate extends Serializable {
 	public boolean isEqual(Coordinate coordinate);
 
 	/**
-	 * @return the spheric representation of a coordinate
-	 * 
-	 * @methodtype conversion
-	 */
-	public SphericCoordinate toSphericCoordinate();
-
-	/**
 	 * @return the String representation of a coordinate
 	 * 
 	 * @methodtype conversion
 	 */
 	public String toString();
+
+	/**
+	 * @methodtype get
+	 */
+	public double getLatitude();
+
+	/**
+	 * @methodtype set
+	 */
+	public void setLatitude(double latitude);
+
+	/**
+	 * @methodtype get
+	 */
+	public double getLongitude();
+
+	/**
+	 * @methodtype set
+	 */
+	public void setLongitude(double longitude);
+
+	/**
+	 * @methodtype get
+	 */
+	public double getRadius();
+
+	/**
+	 * @methodtype set
+	 */
+	public void setRadius(double radius);
 
 }
