@@ -1,5 +1,7 @@
 package org.wahlzeit.model;
 
+import java.util.ArrayList;
+
 /**
  * @author Lucas Löffler
  *
@@ -7,6 +9,8 @@ package org.wahlzeit.model;
 public abstract class AbstractCoordinate implements Coordinate {
 
 	private static final long serialVersionUID = -3526198300387449394L;
+	
+	static protected ArrayList<Coordinate> instances = new ArrayList<Coordinate>();
 
 	/**
 	 * Computes the euclidean distance between to two points in the cartesian
@@ -75,6 +79,7 @@ public abstract class AbstractCoordinate implements Coordinate {
 	}
 
 	protected static void assertValidCoordinate(Coordinate coordinate) {
+		assert (coordinate != null);
 		assertValidLatitude(coordinate.getLatitude());
 		assertValidLongitude(coordinate.getLongitude());
 		assertValidRadius(coordinate.getRadius());
