@@ -12,11 +12,55 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
 	private static final long serialVersionUID = -484535636537846455L;
 
-	private double x;
+	private final double x;
 
-	private double y;
+	private final double y;
 
-	private double z;
+	private final double z;
+
+	/**
+	 * @methodtype create
+	 */
+	public static CartesianCoordinate getCartesianCoordinate(double x,
+			double y, double z) {
+		CartesianCoordinate tmp = new CartesianCoordinate(x, y, z);
+		synchronized (instances) {
+			for (Coordinate coordinate : instances) {
+				if (coordinate.equals(tmp))
+					return (CartesianCoordinate) coordinate;
+			}
+			instances.add(tmp);
+			return tmp;
+		}
+	}
+
+	/**
+	 * @methodtype create
+	 */
+	public static CartesianCoordinate getCartesianCoordinate(
+			Coordinate coordinate) {
+		assertValidCoordinate(coordinate);
+		CartesianCoordinate cartesianCoordinate;
+		if (coordinate instanceof CartesianCoordinate)
+			cartesianCoordinate = (CartesianCoordinate) coordinate;
+		else
+			cartesianCoordinate = doGetCartesianCoordinateFromSphericValues(
+					coordinate.getLatitude(), coordinate.getLongitude(),
+					coordinate.getRadius());
+		return getCartesianCoordinate(cartesianCoordinate.getX(),
+				cartesianCoordinate.getY(), cartesianCoordinate.getZ());
+	}
+
+	/**
+	 * 
+	 * @methodtype constructor
+	 */
+	private CartesianCoordinate(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		assertClassInvariants();
+	}
 
 	/**
 	 * 
@@ -24,32 +68,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 */
 	public CartesianCoordinate() {
 		this(0, 0, 0);
-	}
-
-	/**
-	 * 
-	 * @methodtype constructor
-	 */
-	public CartesianCoordinate(double x, double y, double z) {
-		this.setX(x);
-		this.setY(y);
-		this.setZ(z);
-		assertClassInvariants();
-	}
-
-	/**
-	 * 
-	 * @methodtype constructor
-	 */
-	public CartesianCoordinate(Coordinate coordinate) {
-		assertValidCoordinate(coordinate);
-		CartesianCoordinate cartesianCoordiante = doGetCartesianCoordinateFromSphericValues(
-				coordinate.getLatitude(), coordinate.getLongitude(),
-				coordinate.getRadius());
-		this.setX(cartesianCoordiante.getX());
-		this.setY(cartesianCoordiante.getY());
-		this.setZ(cartesianCoordiante.getZ());
-		assertClassInvariants();
 	}
 
 	/**
@@ -105,8 +123,8 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 * 
 	 * @methodtype set
 	 */
-	public void setX(double x) {
-		this.x = x;
+	public Coordinate setX(double x) {
+		return getCartesianCoordinate(x, this.y, this.z);
 	}
 
 	/**
@@ -121,8 +139,8 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 * 
 	 * @methodtype set
 	 */
-	public void setY(double y) {
-		this.y = y;
+	public Coordinate setY(double y) {
+		return getCartesianCoordinate(this.x, y, this.z);
 	}
 
 	/**
@@ -137,8 +155,8 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 * 
 	 * @methodtype set
 	 */
-	public void setZ(double z) {
-		this.z = z;
+	public Coordinate setZ(double z) {
+		return getCartesianCoordinate(this.x, this.y, z);
 	}
 
 	@Override
@@ -147,14 +165,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	}
 
 	@Override
-	public void setLatitude(double latitude) {
+	public Coordinate setLatitude(double latitude) {
 		assertValidLatitude(latitude);
 		CartesianCoordinate cartesianCoordinate = doGetCartesianCoordinateFromSphericValues(
 				latitude, this.getLongitude(), this.getRadius());
-		setX(cartesianCoordinate.getX());
-		setY(cartesianCoordinate.getY());
-		setZ(cartesianCoordinate.getZ());
-		assertClassInvariants();
+		return cartesianCoordinate;
 	}
 
 	@Override
@@ -163,14 +178,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	}
 
 	@Override
-	public void setLongitude(double longitude) {
+	public Coordinate setLongitude(double longitude) {
 		assertValidLongitude(longitude);
 		CartesianCoordinate cartesianCoordinate = doGetCartesianCoordinateFromSphericValues(
 				this.getLatitude(), longitude, this.getRadius());
-		setX(cartesianCoordinate.getX());
-		setY(cartesianCoordinate.getY());
-		setZ(cartesianCoordinate.getZ());
-		assertClassInvariants();
+		return cartesianCoordinate;
 	}
 
 	@Override
@@ -179,13 +191,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	}
 
 	@Override
-	public void setRadius(double radius) {
+	public Coordinate setRadius(double radius) {
 		assertValidRadius(radius);
 		CartesianCoordinate cartesianCoordinate = doGetCartesianCoordinateFromSphericValues(
 				this.getLatitude(), this.getLongitude(), radius);
-		setX(cartesianCoordinate.getX());
-		setY(cartesianCoordinate.getY());
-		setZ(cartesianCoordinate.getZ());
-		assertClassInvariants();
+		return cartesianCoordinate;
 	}
 }

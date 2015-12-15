@@ -14,34 +14,37 @@ public class SphericCoordinate extends AbstractCoordinate {
 
 	private static final int EARTHRADIUS = 6371;
 
-	private double latitude;
+	private final double latitude;
 
-	private double longitude;
+	private final double longitude;
 
-	private double radius;
+	private final double radius;
 
 	/**
-	 * Construct an empty SphericCoordinate object with both latitude and
-	 * longitude = 0. We assume the earth to be the sphere in this case, so we
-	 * set earth radius as radius.
-	 * 
-	 * @methodtype constructor
+	 * @methodtype create
 	 */
-	public SphericCoordinate() {
-		this(0, 0, EARTHRADIUS);
+	public static SphericCoordinate getSphericCoordinate(double latitude,
+			double longitude, double radius) {
+		SphericCoordinate tmp = new SphericCoordinate(latitude, longitude,
+				radius);
+		synchronized (instances) {
+			for (Coordinate coordinate : instances) {
+				if (coordinate.equals(tmp))
+					return (SphericCoordinate) coordinate;
+			}
+			instances.add(tmp);
+			return tmp;
+		}
 	}
 
 	/**
-	 * 
-	 * @methodtype constructor
+	 * @methodtype create
 	 */
-	public SphericCoordinate(Coordinate coordinate) {
-		assertValidCoordinate(coordinate);
+	public static SphericCoordinate getSphericCoordinate(Coordinate coordinate) {
 		assertParamNotNull(coordinate);
-		setLatitude(coordinate.getLatitude());
-		setLongitude(coordinate.getLongitude());
-		setRadius(coordinate.getRadius());
-		assertClassInvariants();
+		assertValidCoordinate(coordinate);
+		return getSphericCoordinate(coordinate.getLatitude(),
+				coordinate.getLongitude(), coordinate.getRadius());
 	}
 
 	/**
@@ -74,10 +77,21 @@ public class SphericCoordinate extends AbstractCoordinate {
 		assertValidLatitude(latitude);
 		assertValidLongitude(longitude);
 		assertValidRadius(radius);
-		setLatitude(latitude);
-		setLongitude(longitude);
-		setRadius(radius);
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.radius = radius;
 		assertClassInvariants();
+	}
+
+	/**
+	 * Construct an empty SphericCoordinate object with both latitude and
+	 * longitude = 0. We assume the earth to be the sphere in this case, so we
+	 * set earth radius as radius.
+	 * 
+	 * @methodtype constructor
+	 */
+	public SphericCoordinate() {
+		this(0, 0, EARTHRADIUS);
 	}
 
 	/**
@@ -162,10 +176,10 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @throws IllegalArgumentException
 	 * @methodtype set
 	 */
-	public void setLatitude(double latitude) throws IllegalArgumentException {
+	public Coordinate setLatitude(double latitude)
+			throws IllegalArgumentException {
 		assertValidLatitude(latitude);
-		this.latitude = latitude;
-		assertClassInvariants();
+		return getSphericCoordinate(latitude, this.longitude, this.radius);
 	}
 
 	/**
@@ -185,10 +199,9 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @param longitude
 	 * @methodtype set
 	 */
-	public void setLongitude(double longitude) {
+	public Coordinate setLongitude(double longitude) {
 		assertValidLongitude(longitude);
-		this.longitude = longitude;
-		assertClassInvariants();
+		return getSphericCoordinate(this.latitude, longitude, this.radius);
 	}
 
 	/**
@@ -203,9 +216,8 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @param radius
 	 * @methodtype set
 	 */
-	public void setRadius(double radius) {
+	public Coordinate setRadius(double radius) {
 		assertValidRadius(radius);
-		this.radius = radius;
-		assertClassInvariants();
+		return getSphericCoordinate(this.latitude, this.longitude, radius);
 	}
 }

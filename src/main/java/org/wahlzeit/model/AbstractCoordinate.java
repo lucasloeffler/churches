@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public abstract class AbstractCoordinate implements Coordinate {
 
 	private static final long serialVersionUID = -3526198300387449394L;
-	
-	static protected ArrayList<Coordinate> instances = new ArrayList<Coordinate>();
+
+	protected static ArrayList<Coordinate> instances = new ArrayList<Coordinate>();
 
 	/**
 	 * Computes the euclidean distance between to two points in the cartesian
@@ -66,7 +66,7 @@ public abstract class AbstractCoordinate implements Coordinate {
 		assertValidRadius(this.getRadius());
 	}
 
-	protected void assertParamNotNull(Coordinate coordinate) {
+	protected static void assertParamNotNull(Coordinate coordinate) {
 		if (coordinate == null)
 			throw new IllegalArgumentException(
 					"Passed coordinate must not be null.");
