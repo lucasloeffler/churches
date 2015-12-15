@@ -40,6 +40,14 @@ public class SphericCoordinate extends AbstractCoordinate {
 	/**
 	 * @methodtype create
 	 */
+	public static SphericCoordinate getSphericCoordinate(double latitude,
+			double longitude) {
+		return getSphericCoordinate(latitude, longitude, EARTHRADIUS);
+	}
+
+	/**
+	 * @methodtype create
+	 */
 	public static SphericCoordinate getSphericCoordinate(Coordinate coordinate) {
 		assertParamNotNull(coordinate);
 		assertValidCoordinate(coordinate);

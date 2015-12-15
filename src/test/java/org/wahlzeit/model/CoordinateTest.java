@@ -7,17 +7,17 @@ public class CoordinateTest {
 
 	private static final double DELTA = 0.5;
 
-	private static final SphericCoordinate erlangenSpheric = new SphericCoordinate(
-			49.58, 11.01);
-	private static final SphericCoordinate erlangenSphericCopy = new SphericCoordinate(
-			49.58, 11.01);
+	private static final SphericCoordinate erlangenSpheric = SphericCoordinate
+			.getSphericCoordinate(49.58, 11.01);
+	private static final SphericCoordinate erlangenSphericCopy = SphericCoordinate
+			.getSphericCoordinate(49.58, 11.01);
 
-	private static final SphericCoordinate houston = new SphericCoordinate(
-			29.76, -95.36);
-	private static final SphericCoordinate yakutsk = new SphericCoordinate(
-			62.03, 129.6);
-	private static final SphericCoordinate sydney = new SphericCoordinate(
-			-33.86, 151.2);
+	private static final SphericCoordinate houston = SphericCoordinate
+			.getSphericCoordinate(29.76, -95.36);
+	private static final SphericCoordinate yakutsk = SphericCoordinate
+			.getSphericCoordinate(62.03, 129.6);
+	private static final SphericCoordinate sydney = SphericCoordinate
+			.getSphericCoordinate(-33.86, 151.2);
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLatitudeOutOfHigherBounds() {
