@@ -1,5 +1,8 @@
 package org.wahlzeit.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A spheric coordinate describes a point in a spherical coordinate system.
  * Every point contains of a latitudinal value, a longitudinal value and a
@@ -11,6 +14,8 @@ package org.wahlzeit.model;
 public class SphericCoordinate extends AbstractCoordinate {
 
 	private static final long serialVersionUID = 9148993767234441255L;
+
+	private static final Map<SphericCoordinate, SphericCoordinate> instances = new HashMap<SphericCoordinate, SphericCoordinate>();
 
 	private static final int EARTHRADIUS = 6371;
 
@@ -27,12 +32,11 @@ public class SphericCoordinate extends AbstractCoordinate {
 			double longitude, double radius) {
 		SphericCoordinate tmp = new SphericCoordinate(latitude, longitude,
 				radius);
-		synchronized (instances) {
-			for (Coordinate coordinate : instances) {
-				if (coordinate.equals(tmp))
-					return (SphericCoordinate) coordinate;
-			}
-			instances.add(tmp);
+		SphericCoordinate instance = instances.get(tmp);
+		if (instance != null) {
+			return instance;
+		} else {
+			instances.put(tmp, tmp);
 			return tmp;
 		}
 	}
@@ -68,7 +72,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * @methodtype constructor
 	 *
 	 */
-	public SphericCoordinate(double latitude, double longitude) {
+	private SphericCoordinate(double latitude, double longitude) {
 		this(latitude, longitude, EARTHRADIUS);
 	}
 
@@ -81,7 +85,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * 
 	 * @methodtype constructor
 	 */
-	public SphericCoordinate(double latitude, double longitude, double radius) {
+	private SphericCoordinate(double latitude, double longitude, double radius) {
 		assertValidLatitude(latitude);
 		assertValidLongitude(longitude);
 		assertValidRadius(radius);
@@ -98,7 +102,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 	 * 
 	 * @methodtype constructor
 	 */
-	public SphericCoordinate() {
+	private SphericCoordinate() {
 		this(0, 0, EARTHRADIUS);
 	}
 

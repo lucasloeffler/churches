@@ -21,34 +21,28 @@ public class CoordinateTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLatitudeOutOfHigherBounds() {
-		new SphericCoordinate(91, 0);
+		SphericCoordinate.getSphericCoordinate(91, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLatitudeOutOfLowerBounds() {
-		new SphericCoordinate(-91, 0);
+		SphericCoordinate.getSphericCoordinate(-91, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLongitudeOutOfHigherBounds() {
-		new SphericCoordinate(45, 181);
+		SphericCoordinate.getSphericCoordinate(45, 181);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testLongitudeOutOfLowerBounds() {
-		new SphericCoordinate(45, -181);
-	}
-
-	@Test
-	public void testDefaultConstructor() {
-		SphericCoordinate sphericCoordinate = new SphericCoordinate();
-		assertEquals(0.0, sphericCoordinate.getLatitude(), DELTA);
-		assertEquals(0.0, sphericCoordinate.getLongitude(), DELTA);
+		SphericCoordinate.getSphericCoordinate(45, -181);
 	}
 
 	@Test
 	public void testConstructor() {
-		SphericCoordinate sphericCoordinate = new SphericCoordinate(-12, 92);
+		SphericCoordinate sphericCoordinate = SphericCoordinate
+				.getSphericCoordinate(-12, 92);
 		assertEquals(-12, sphericCoordinate.getLatitude(), DELTA);
 		assertEquals(92, sphericCoordinate.getLongitude(), DELTA);
 	}

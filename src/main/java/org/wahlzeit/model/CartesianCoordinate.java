@@ -1,5 +1,8 @@
 package org.wahlzeit.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A cartesian coordinate describes a point in a three-dimensional cartesian
  * coordinate system. Every point contains of three axis values (x, y, z) that
@@ -11,6 +14,8 @@ package org.wahlzeit.model;
 public class CartesianCoordinate extends AbstractCoordinate {
 
 	private static final long serialVersionUID = -484535636537846455L;
+
+	private static final Map<CartesianCoordinate, CartesianCoordinate> instances = new HashMap<CartesianCoordinate, CartesianCoordinate>();
 
 	private final double x;
 
@@ -24,12 +29,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	public static CartesianCoordinate getCartesianCoordinate(double x,
 			double y, double z) {
 		CartesianCoordinate tmp = new CartesianCoordinate(x, y, z);
-		synchronized (instances) {
-			for (Coordinate coordinate : instances) {
-				if (coordinate.equals(tmp))
-					return (CartesianCoordinate) coordinate;
-			}
-			instances.add(tmp);
+		CartesianCoordinate instance = instances.get(tmp);
+		if (instance != null) {
+			return instance;
+		} else {
+			instances.put(tmp, tmp);
 			return tmp;
 		}
 	}
@@ -66,7 +70,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 	 * 
 	 * @methodtype constructor
 	 */
-	public CartesianCoordinate() {
+	private CartesianCoordinate() {
 		this(0, 0, 0);
 	}
 
@@ -83,7 +87,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 		double x = radius * sineLongitude * cosineLatitude;
 		double y = radius * sineLongitude * sineLatitude;
 		double z = radius * cosineLongitude;
-		return new CartesianCoordinate(x, y, z);
+		return CartesianCoordinate.getCartesianCoordinate(x, y, z);
 	}
 
 	/**
@@ -95,8 +99,8 @@ public class CartesianCoordinate extends AbstractCoordinate {
 				+ Math.pow(this.getY(), 2) + Math.pow(this.getZ(), 2));
 		double latitude = Math.toDegrees(Math.asin(this.getZ() / radius));
 		double longitude = Math.toDegrees(Math.atan2(this.getY(), this.getX()));
-		SphericCoordinate sphericCoordinate = new SphericCoordinate(latitude,
-				longitude, radius);
+		SphericCoordinate sphericCoordinate = SphericCoordinate
+				.getSphericCoordinate(latitude, longitude, radius);
 		assertValidCoordinate(sphericCoordinate);
 		return sphericCoordinate;
 	}
