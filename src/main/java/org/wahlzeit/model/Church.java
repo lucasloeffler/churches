@@ -2,44 +2,50 @@ package org.wahlzeit.model;
 
 import java.io.Serializable;
 
+import org.wahlzeit.services.DataObject;
+
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 /**
  * Entity class that represents a church. Every church has a unique id, a
- * specific name, a {@link ChurchType} and a year of completion.
+ * specific name, a location, a {@link ChurchType} and a year of completion.
  * 
  * @author Lucas Löffler
  *
  */
 @Entity
-public class Church implements Serializable {
-
-	private static final long serialVersionUID = -3845788324666569497L;
+public class Church extends DataObject implements Serializable {
 
 	@Id
-	protected String id;
+	private Long id;
 
 	/**
-	 * Name of the church
+	 * Name of the church, e.g. St. Peter's Basilica
 	 */
-	protected String name;
+	private String name;
 
 	/**
-	 * ChurchType of the church
+	 * Name of the town or village the church is located, e.g. Vatican City or
+	 * Berlin
 	 */
-	protected ChurchType type;
+	private String location;
 
 	/**
-	 * Year of completion
+	 * {@link ChurchType} of the church
 	 */
-	protected int yearOfCompletion;
+	private ChurchType type;
+
+	/**
+	 * Year of completion, e.g. 1626
+	 */
+	private int yearOfCompletion;
 
 	/**
 	 * @methodtype constructor
 	 */
 	public Church() {
-		// do nothing
+		// empty constructor, do nothing
 	}
 
 	/**
@@ -47,14 +53,15 @@ public class Church implements Serializable {
 	 */
 	public Church(String name) {
 		this.setName(name);
-		this.setType(ChurchType.UNKNOWN);
 	}
 
 	/**
 	 * @methodtype constructor
 	 */
-	public Church(String name, ChurchType type, int yearOfCompletion) {
+	public Church(String name, String location, ChurchType type,
+			int yearOfCompletion) {
 		this.setName(name);
+		this.setLocation(location);
 		this.setType(type);
 		this.setYearOfCompletion(yearOfCompletion);
 	}
@@ -62,7 +69,7 @@ public class Church implements Serializable {
 	/**
 	 * @methodtype get
 	 */
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
@@ -78,6 +85,20 @@ public class Church implements Serializable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @methodtype get
+	 */
+	public String getLocation() {
+		return location;
+	}
+
+	/**
+	 * @methodtype set
+	 */
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	/**

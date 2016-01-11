@@ -11,8 +11,6 @@ import com.googlecode.objectify.annotation.Subclass;
 @Subclass(index = true)
 public class ChurchPhoto extends Photo {
 
-	private static final long serialVersionUID = 8972193207756705246L;
-
 	protected Church church;
 
 	/**
