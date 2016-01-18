@@ -51,8 +51,9 @@ public class Church extends DataObject implements Serializable {
 	/**
 	 * @methodtype constructor
 	 */
-	public Church(String name) {
+	public Church(String name, ChurchType churchType) {
 		this.setName(name);
+		this.setType(churchType);
 	}
 
 	/**

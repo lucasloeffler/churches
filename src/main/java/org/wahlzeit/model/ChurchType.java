@@ -76,6 +76,10 @@ public class ChurchType extends DataObject {
 		this.name = name;
 	}
 
+	public Church createInstance(String name) {
+		return new Church(name, this);
+	}
+
 	public Long getId() {
 		return id;
 	}
